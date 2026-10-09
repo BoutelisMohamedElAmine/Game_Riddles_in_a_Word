@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>إعدادات الألغاز</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { display: block; padding: 20px; }
+        .admin-container { max-width: 700px; margin: 0 auto; background: white; border-radius: 15px; padding: 25px; }
+        input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; }
+        button { background: #00bcd4; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 700; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 8px; border-bottom: 1px solid #eee; text-align: right; font-size: 13px; }
+        th { background: #673ab7; color: white; }
+        .del-btn { background: #f44336; padding: 4px 10px; font-size: 12px; margin: 0; }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <h1 style="color:#673ab7;">⚙️ لوحة التحكم</h1>
+    <h2>إضافة لغز جديد</h2>
+    <input type="text" id="q" placeholder="السؤال / اللغز">
+    <input type="text" id="a" placeholder="الإجابة (كلمة واحدة بدون مسافات)">
+    <select id="lvl">
+        <option value="1">المستوى 1 - سهل (50 نقطة)</option>
+        <option value="2">المستوى 2 - متوسط (100 نقطة)</option>
+        <option value="3">المستوى 3 - صعب (200 نقطة)</option>
+        <option value="4">المستوى 4 - خبير (350 نقطة)</option>
+        <option value="5">المستوى 5 - أسطورة (500 نقطة)</option>
+    </select>
+    <input type="number" id="rw" placeholder="المكافأة" value="50">
+    <button onclick="addRiddle()">➕ إضافة اللغز</button>
+
+    <h2 style="margin-top:30px;">📋 الألغاز الحالية (<span id="count">0</span>)</h2>
+    <table>
+        <thead><tr><th>#</th><th>السؤال</th><th>الإجابة</th><th>المستوى</th><th>المكافأة</th><th></th></tr></thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</div>
+<script>
+async function loadRiddles() {
+    const res = await fetch('/api/riddles');
+    const data = await res.json();
+    document.getElementById('count').innerText = data.length;
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+    data.forEach((r, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${r.question}</td><td>${r.answer}</td>
+            <td>${r.level}</td><td>${r.reward}</td>
+            <td><button class="del-btn" onclick="del(${r.id})">🗑️</button></td>`;
+        tbody.appendChild(tr);
+    });
+}
+async function addRiddle() {
+    const question = document.getElementById('q').value.trim();
+    const answer = document.getElementById('a').value.trim();
+    const level = parseInt(document.getElementById('lvl').value);
+    const reward = parseInt(document.getElementById('rw').value);
+    if (!question || !answer) return alert('يرجى ملء جميع الحقول');
+    await fetch('/api/riddles', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ question, answer, level, reward })
+    });
+    document.getElementById('q').value = '';
+    document.getElementById('a').value = '';
+    loadRiddles();
+}
+async function del(id) {
+    if (!confirm('حذف هذا اللغز؟')) return;
+    await fetch('/api/riddles/' + id, { method: 'DELETE' });
+    loadRiddles();
+}
+loadRiddles();
+</script>
+</body>
+</html>

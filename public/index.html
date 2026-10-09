@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ألغاز في كلمة</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- شاشة اللعب -->
+    <div id="game-screen" class="game-container">
+        <header>
+            <div class="stat">💰 <span id="score">200</span></div>
+            <div class="stat">🎯 مستوى <span id="level">1</span></div>
+            <div class="stat">📊 <span id="progress">1/50</span></div>
+        </header>
+
+        <div class="question-card">
+            <div class="badges">
+                <span id="level-badge" class="level-badge">سهل</span>
+                <span id="reward-badge" class="reward-badge">+50</span>
+            </div>
+            <p id="question-text">جاري التحميل...</p>
+        </div>
+
+        <div id="answer-slots" class="answer-slots"></div>
+
+        <div class="hint-bar">
+            <button class="hint-btn" onclick="useReveal()">💡 كشف حرف <span>20</span></button>
+            <button class="hint-btn" onclick="useRemove()">✂️ إزالة 3 <span>30</span></button>
+            <button class="hint-btn" onclick="useSkip()">⏭️ تخطي <span>50</span></button>
+        </div>
+
+        <div id="letters-bank" class="letters-bank"></div>
+
+        <button class="end-btn" onclick="endGame()">إنهاء اللعبة وعرض النتيجة</button>
+    </div>
+
+    <!-- شاشة النهاية -->
+    <div id="end-screen" class="game-container" style="display:none;">
+        <div class="end-card">
+            <h1>🎉 انتهت اللعبة!</h1>
+            <p>رصيدك النهائي:</p>
+            <div class="final-score"><span id="final-score">0</span> نقطة</div>
+            <input type="text" id="player-name" placeholder="أدخل اسمك هنا..." maxlength="20">
+            <button onclick="submitScore()" class="submit-btn">حفظ النتيجة</button>
+            <button onclick="location.reload()" class="restart-btn">العب مرة أخرى</button>
+        </div>
+        <div id="leaderboard-container" style="display:none;">
+            <h2>🏆 لوحة المتصدرين</h2>
+            <ol id="leaderboard-list"></ol>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
